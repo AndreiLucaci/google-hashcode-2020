@@ -71,10 +71,18 @@ const compute = fileName => {
   const signedUpLibs = []
   let sigLib = orderedLibraries.shift()
 
-  const processedBooks = []
+  // const processedBooks = []
+  // const processedBooks = new Set()
+  const processedBooks = {}
+  for (let i = 0; i < input.bookScores.length; i++) {
+    processedBooks[i] = false
+  }
 
   for (let i = 0; i < input.D; i++) {
-    // console.info(`Curent day ${i}`)
+    if (!(i % 1000)) {
+      console.info(`[${fileName}]: Day ${i}`)
+    }
+
     if (signedUpLibs.length) {
       for (let sLib of signedUpLibs) {
         let rLib = result.libraries[sLib.id]
@@ -86,15 +94,22 @@ const compute = fileName => {
           .map(x => books[x])
           .sort((a, b) => b.val - a.val)
 
-        for (let j = 0; j < sLib.M && unprocessedBooks.length; j++) {
+        for (let j = 0; j < sLib.M && unprocessedBooks.length; ) {
           const ub = unprocessedBooks.shift()
           const bkId = ub.i
-          processedBooks.push(bkId)
+
+          if (!processedBooks[bkId]) {
+            processedBooks[bkId] = true
+
+            rLib.books.push(bkId)
+            j++
+          }
+
           const index = sLib.bookIds.indexOf(bkId)
+
           if (index > -1) {
             sLib.bookIds.splice(index, 1)
           }
-          rLib.books.push(bkId)
         }
       }
     }
