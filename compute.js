@@ -86,19 +86,15 @@ const compute = fileName => {
           .map(x => books[x])
           .sort((a, b) => b.val - a.val)
 
-        for (let j = 0; j < sLib.M && unprocessedBooks.length; ) {
+        for (let j = 0; j < sLib.M && unprocessedBooks.length; j++) {
           const ub = unprocessedBooks.shift()
-          if (!processedBooks.some(x => ub.i === x)) {
-            const bkId = ub.i
-            processedBooks.push(bkId)
-            const index = sLib.bookIds.indexOf(bkId)
-            if (index > -1) {
-              sLib.bookIds.splice(index, 1)
-            }
-            rLib.books.push(bkId)
-            j++
-            continue
+          const bkId = ub.i
+          processedBooks.push(bkId)
+          const index = sLib.bookIds.indexOf(bkId)
+          if (index > -1) {
+            sLib.bookIds.splice(index, 1)
           }
+          rLib.books.push(bkId)
         }
       }
     }
