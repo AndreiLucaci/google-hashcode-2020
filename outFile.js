@@ -15,7 +15,7 @@ const toOut = (fileName, result) => {
     writer.write(os.EOL)
   }
 
-  writeLine(result.nrOfLibs)
+  writeLine(result.libraries.length)
   for (let library of result.libraries) {
     writeLine(`${library.id} ${library.books.length}`)
     writeLine(library.books.join(' '))

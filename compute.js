@@ -1,36 +1,24 @@
 const readFile = require('./readFile')
 const outFile = require('./outFile')
 
-const generateResult = () => ({
-  nrOfLibs: 2,
-  libraries: [
-    {
-      id: 1,
-      nrOfBooks: 5,
-      books: [1, 2, 3, 4, 5],
-    },
-    {
-      id: 2,
-      nrOfBooks: 5,
-      books: [1, 2, 3, 4, 5],
-    },
-  ],
-})
-
 const compute = fileName => {
   const input = readFile(fileName)
   const { libraries } = input
 
-  const orderedLibraries = [...libraries].sort((a, b) => {
-    // const firstSortCriteria = a.T - b.T
-    // if (!firstSortCriteria) {
-    const bSum = b.bookIds.map(x => input.bookScores[x]).reduce((c, d) => c + d)
-    const aSum = a.bookIds.map(x => input.bookScores[x]).reduce((c, d) => c + d)
-    return bSum - aSum
-    // } else {
-    // return firstSortCriteria
-    // }
-  })
+  const orderedLibraries = [...libraries]
+    .map(x => {
+      x.potentialScore = x.bookIds
+        .map(x => input.bookScores[x])
+        .reduce((c, d) => c + d)
+      return x
+    })
+    .sort((a, b) => {
+      const firstSortCriteria = a.T - b.T
+      const secondSortCriteria = b.M - a.M
+      const thirdSortCriteria = b.potentialScore - a.potentialScore
+
+      return firstSortCriteria || secondSortCriteria || thirdSortCriteria
+    })
 
   const createOrderedbookDic = arr => {
     const dic = {}
@@ -42,21 +30,10 @@ const compute = fileName => {
       }
     }
 
-    // const dic = arr.reduce(
-    //   (acc, val, i) => ({
-    //     ...acc,
-    //     ...{
-    //       [i]: { val, i },
-    //     },
-    //   }),
-    //   {}
-    // )
-
     return dic
   }
 
   const result = {
-    nrOfLibs: 0,
     libraries: {},
   }
 
@@ -73,7 +50,7 @@ const compute = fileName => {
   const signedUpLibs = []
   let sigLib = orderedLibraries.shift()
 
-  // const processedBooks = []
+  const processedBooks = {}
 
   for (let i = 0; i < input.D; i++) {
     if (!(i % 1000)) {
@@ -89,23 +66,23 @@ const compute = fileName => {
 
         const unprocessedBooks = sLib.bookIds
           .map(x => books[x])
-          // .filter(x => !processedBooks[x.i])
           .sort((a, b) => b.val - a.val)
 
-        for (let j = 0; j < sLib.M && unprocessedBooks.length; ) {
+        let j = 0
+        while (j < sLib.M && unprocessedBooks.length) {
           const ub = unprocessedBooks.shift()
           const bkId = ub.i
 
-          // if (!processedBooks[bkId]) {
-          // processedBooks[bkId] = true
           const index = sLib.bookIds.indexOf(bkId)
           if (index > -1) {
             sLib.bookIds.splice(index, 1)
           }
+
+          if (processedBooks[bkId]) continue
+
+          processedBooks[bkId] = true
           rLib.books.push(bkId)
           j++
-          continue
-          // }
         }
       }
     }
@@ -115,7 +92,6 @@ const compute = fileName => {
       if (!sigLib.T) {
         signedUpLibs.push(sigLib)
         sigLib = orderedLibraries.shift()
-        result.nrOfLibs++
       }
     }
   }
