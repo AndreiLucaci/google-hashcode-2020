@@ -1,0 +1,11 @@
+{
+  "name": "google-hashcode-2020",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:AndreiLucaci/google-hashcode-2020.git",
+  "author": "Andrei Lucaci <lucaciandrei@outlook.com>",
+  "license": "MIT",
+  "dependencies": {
+    "n-readlines": "^1.0.0"
+  }
+}
