@@ -17,10 +17,8 @@ const toOut = (fileName, result) => {
 
   writeLine(result.nrOfLibs)
   for (let library of result.libraries) {
-    if (library.books.length) {
-      writeLine(`${library.id} ${library.books.length}`)
-      writeLine(library.books.join(' '))
-    }
+    writeLine(`${library.id} ${library.books.length}`)
+    writeLine(library.books.join(' '))
   }
 
   writer.end()

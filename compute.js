@@ -22,12 +22,14 @@ const compute = fileName => {
   const { libraries } = input
 
   const orderedLibraries = [...libraries].sort((a, b) => {
-    const firstSortCriteria = a.T - b.T
-    if (!firstSortCriteria) {
-      return b.M - a.M
-    } else {
-      return firstSortCriteria
-    }
+    // const firstSortCriteria = a.T - b.T
+    // if (!firstSortCriteria) {
+    const bSum = b.bookIds.map(x => input.bookScores[x]).reduce((c, d) => c + d)
+    const aSum = a.bookIds.map(x => input.bookScores[x]).reduce((c, d) => c + d)
+    return bSum - aSum
+    // } else {
+    // return firstSortCriteria
+    // }
   })
 
   const createOrderedbookDic = arr => {
@@ -72,15 +74,10 @@ const compute = fileName => {
   let sigLib = orderedLibraries.shift()
 
   // const processedBooks = []
-  // const processedBooks = new Set()
-  const processedBooks = {}
-  for (let i = 0; i < input.bookScores.length; i++) {
-    processedBooks[i] = false
-  }
 
   for (let i = 0; i < input.D; i++) {
     if (!(i % 1000)) {
-      console.info(`[${fileName}]: Day ${i}`)
+      console.log(i)
     }
 
     if (signedUpLibs.length) {
@@ -92,24 +89,23 @@ const compute = fileName => {
 
         const unprocessedBooks = sLib.bookIds
           .map(x => books[x])
+          // .filter(x => !processedBooks[x.i])
           .sort((a, b) => b.val - a.val)
 
         for (let j = 0; j < sLib.M && unprocessedBooks.length; ) {
           const ub = unprocessedBooks.shift()
           const bkId = ub.i
 
-          if (!processedBooks[bkId]) {
-            processedBooks[bkId] = true
-
-            rLib.books.push(bkId)
-            j++
-          }
-
+          // if (!processedBooks[bkId]) {
+          // processedBooks[bkId] = true
           const index = sLib.bookIds.indexOf(bkId)
-
           if (index > -1) {
             sLib.bookIds.splice(index, 1)
           }
+          rLib.books.push(bkId)
+          j++
+          continue
+          // }
         }
       }
     }
@@ -124,7 +120,7 @@ const compute = fileName => {
     }
   }
 
-  result.libraries = Object.values(result.libraries)
+  result.libraries = Object.values(result.libraries).filter(x => x.books.length)
   outFile(fileName, result)
 }
 
