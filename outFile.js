@@ -6,13 +6,21 @@ const toOut = (fileName, result) => {
   const name = path.basename(fileName, '.txt')
   const outFolder = 'output'
 
-  const writer = fs.createWriteStream(`${outFolder}/${name}.out`, {
-    flags: 'w+',
-  })
+  const filename = `${outFolder}/${name}.out`
+  // const writer = fs.createWriteStream(filename, {
+  //   flags: 'w+',
+  // })
+
+  // let str = ''
+
+  const lines = []
 
   const writeLine = txt => {
-    writer.write(txt.toString())
-    writer.write(os.EOL)
+    // str += txt.toString()
+    // str += os.EOL
+    // writer.write(txt.toString())
+    // writer.write(os.EOL)
+    lines.push(txt.toString())
   }
 
   writeLine(result.libraries.length)
@@ -21,7 +29,9 @@ const toOut = (fileName, result) => {
     writeLine(library.books.join(' '))
   }
 
-  writer.end()
+  fs.writeFileSync(filename, lines.join(os.EOL))
+
+  // writer.end()
 }
 
 module.exports = toOut

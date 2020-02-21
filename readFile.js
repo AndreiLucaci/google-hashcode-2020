@@ -1,4 +1,3 @@
-const fs = require('fs')
 const lineReader = require('n-readlines')
 
 const toLib = (N, T, M, bookIds, id) => ({
@@ -24,6 +23,14 @@ const readFile = fileName => {
     .split(' ')
     .map(x => Number(x))
 
+  const bookScoresObj = {}
+  for (let j = 0; j < bookScores.length; j++) {
+    bookScoresObj[j] = {
+      val: bookScores[j],
+      i: j,
+    }
+  }
+
   let i = 0
   while ((line = get())) {
     const [N, T, M] = line.split(' ').map(x => Number(x))
@@ -39,6 +46,7 @@ const readFile = fileName => {
     L,
     D,
     bookScores,
+    bookScoresObj,
     libraries,
   }
 }
